@@ -655,14 +655,44 @@ class API():
 ###
 
 
-class ConnectionException(Exception):
+class ApiException(Exception):
+    def __init__(self, value=None):
+        if value:
+            try:
+                d = json.loads(value)
+                if 'error' in d:
+                    # perhaps there is detailed error-information in a dict
+                    txt = '\n'.join([
+                        "{0}: {1}".format(k, v)
+                        for k, v in d['error'].iteritems()
+                    ])
+                    super(ApiException, self).__init__(txt)
+
+                elif 'rc' in d:
+                    # rc should be always there with the text of the return
+                    # code
+                    super(ApiException, self).__init__(d['rc'])
+
+                else:
+                    # fallback
+                    super(ApiException, self).__init__(value)
+
+            except ValueError:
+                # fallback
+                super(ApiException, self).__init__(value)
+        else:
+            # fallback
+            super(ApiException, self).__init__()
+
+
+class ConnectionException(ApiException):
     """
         We raise this exception if the API was unreachable.
     """
     pass
 
 
-class TokenRequiredError(Exception):
+class TokenRequiredError(ApiException):
     """
         We raise this exception if a method requires a token but self._token
         is none.
@@ -674,40 +704,20 @@ class TokenRequiredError(Exception):
         return 'No valid token. Use create_token(email, password) to get one'
 
 
-class BadRequestError(Exception):
+class BadRequestError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 400
         BAD REQUEST.
     """
 
-    msgs = {}
-
-    #noinspection PyMissingConstructor
     def __init__(self, value):
-        try:
-            if value.startswith("Bad Request"):
-                self.msgs = json.loads(value[12:])
-            elif value.strip()[0] == '{' and value.strip()[-1] == '}':
-                d = json.loads(value)
-                if 'error' in d:
-                    self.msgs = d['error']
-                elif 'rc' in d:
-                    self.msgs = {"RC": d['rc']}
-                else:
-                    self.msgs = {"RC", "Bad Request"}
-            else:
-                self.msgs = {}
-        except ValueError:
-            self.msgs = {}
-
-    def __str__(self):
-        msg = ''
-        for key in self.msgs:
-            msg = msg + key + ': ' + self.msgs[key] + '\n'
-        return msg
+        if value.startswith("Bad Request"):
+            super(BadRequestError, self).__init__(value[12:])
+        else:
+            super(BadRequestError, self).__init__(value)
 
 
-class UnauthorizedError(Exception):
+class UnauthorizedError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 401
         UNAUTHORIZED.
@@ -715,7 +725,7 @@ class UnauthorizedError(Exception):
     pass
 
 
-class ForbiddenError(Exception):
+class ForbiddenError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 403
         FORBIDDEN.
@@ -723,7 +733,7 @@ class ForbiddenError(Exception):
     pass
 
 
-class NotFoundError(Exception):
+class NotFoundError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 404
         NOT FOUND.
@@ -731,7 +741,7 @@ class NotFoundError(Exception):
     pass
 
 
-class ConflictDuplicateError(Exception):
+class ConflictDuplicateError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 409
         DUPLICATE ENTRY.
@@ -739,7 +749,7 @@ class ConflictDuplicateError(Exception):
     pass
 
 
-class GoneError(Exception):
+class GoneError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 410
         GONE.
@@ -747,7 +757,7 @@ class GoneError(Exception):
     pass
 
 
-class InternalServerError(Exception):
+class InternalServerError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 500
         INTERNAL SERVER ERROR.
@@ -755,7 +765,7 @@ class InternalServerError(Exception):
     pass
 
 
-class NotImplementedError(Exception):
+class NotImplementedError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 501
         NOT IMPLEMENTED.
@@ -763,7 +773,7 @@ class NotImplementedError(Exception):
     pass
 
 
-class ThrottledError(Exception):
+class ThrottledError(ApiException):
     """
         We raise this exception whenever the API answers with HTTP STATUS 503
         THROTTLED.
