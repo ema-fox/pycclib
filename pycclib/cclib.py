@@ -678,7 +678,11 @@ class ApiException(Exception):
 
                 else:
                     # fallback
-                    super(ApiException, self).__init__(value)
+                    txt = '\n'.join([
+                        "{0}: {1}".format(k, v)
+                        for k, v in d.iteritems()
+                    ])
+                    super(ApiException, self).__init__(txt)
 
             except ValueError:
                 # fallback
