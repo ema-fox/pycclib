@@ -37,7 +37,6 @@ except ImportError:
     import simplejson as json
 
 import time
-from urllib import urlencode
 import socket
 
 import httplib2
@@ -878,13 +877,11 @@ class Request():
         elif self.email is not None and self.password is not None:
             h.add_credentials(self.email, self.password)
         #
-        # The API expects the body to be url-encoded. If data was passed to
-        # the request method we therefore use url-encode from urllib.
-        #
+        # Encode the data for the API
         if data is None:
             body = ''
         else:
-            body = urlencode(data)
+            body = json.dumps(data)
 
         #
         # We set the Host Header for MacOSX 10.5,
@@ -902,7 +899,7 @@ class Request():
         # also set the correct Content-Type header.
         #
         if method.upper() == 'PUT' or 'POST':
-            headers['Content-Type'] = 'application/x-www-form-urlencoded'
+            headers['Content-Type'] = 'application/json'
         #
         # We also set the Content-Length and Accept-Encoding headers.
         #
