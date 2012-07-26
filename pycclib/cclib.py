@@ -662,26 +662,35 @@ class ApiException(Exception):
         if value:
             try:
                 d = json.loads(value)
-                if 'error' in d:
-                    # perhaps there is detailed error-information in a dict
-                    txt = '\n'.join([
-                        "{0}: {1}".format(k, v)
-                        for k, v in d['error'].iteritems()
-                    ])
-                    super(ApiException, self).__init__(txt)
+                txt = ""
 
-                elif 'rc' in d:
+                if 'rc' in d:
                     # rc should be always there with the text of the return
                     # code
-                    super(ApiException, self).__init__(d['rc'])
+                    txt += d['rc'] + "\n"
 
-                else:
+                if 'error' in d:
+                    error = d['error']
+                    if len(error) == 1 and 'message' in error:
+                        txt += error['message'] + "\n"
+                    else:
+                        # perhaps there is detailed error-information in a dict
+                        txt += '\n'.join([
+                            "{0}: {1}".format(k, v)
+                            for k, v in error.iteritems()
+                        ])
+
+                if 'message' in d:
+                    txt += d['message'] + "\n"
+
+                if txt == "":
                     # fallback
                     txt = '\n'.join([
                         "{0}: {1}".format(k, v)
                         for k, v in d.iteritems()
                     ])
-                    super(ApiException, self).__init__(txt)
+
+                super(ApiException, self).__init__(txt)
 
             except ValueError:
                 # fallback
@@ -705,9 +714,8 @@ class TokenRequiredError(ApiException):
 
         Use the create_token() method to get a new token.
     """
-    #noinspection PyMethodOverriding
-    def __unicode__(self):
-        return 'No valid token. Use create_token(email, password) to get one'
+    def __init__(self, value=None):
+        super(TokenRequiredError, self).__init__('No valid token. Use create_token(email, password) to get one')
 
 
 class BadRequestError(ApiException):
