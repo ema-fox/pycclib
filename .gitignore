@@ -1,11 +1,45 @@
 *.iml
-*.pyc
-**/*.pyc
-*.egg-info/
 .idea/
 .bzr/
 .bzrignore
 pycclib/apiurl.py
 *.swp
 .DS_Store
-tags
+
+
+# from https://github.com/github/gitignore/blob/master/Python.gitignore
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+#Translations
+*.mo
+
+#Mr Developer
+.mr.developer.cfg
+
+
