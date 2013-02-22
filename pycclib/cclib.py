@@ -36,6 +36,7 @@ except ImportError:
     import simplejson as json
 
 import time
+import sys
 from urllib import urlencode
 import socket
 from decimal import Decimal
@@ -932,7 +933,8 @@ class Request():
         # This enables basic statistics about still used pycclib versions in
         # the wild.
         #
-        headers['User-Agent'] = 'pycclib/%s' % self.version
+        headers['User-Agent'] = 'pycclib/%s; Python %i.%i.%i' % (self.version, sys.version_info.major,
+                                                                sys.version_info.minor, sys.version_info.micro)
         #
         # The API expects PUT or POST data to be x-www-form-urlencoded so we
         # also set the correct Content-Type header.
