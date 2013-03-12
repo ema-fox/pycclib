@@ -275,14 +275,12 @@ class API():
         content = request.post(resource, data)
         return json.loads(content)
 
-    def read_aliases(self, app_name=None, deployment_name=None):
-        content = None
-        if app_name and deployment_name:
-            self.requires_token()
-            resource = '/app/%s/deployment/%s/alias/' % \
-                (app_name, deployment_name)
-            request = Request(token=self.get_token(), api_url=self.api_url)
-            content = request.get(resource)
+    def read_aliases(self, app_name, deployment_name):
+        self.requires_token()
+        resource = '/app/%s/deployment/%s/alias/' % \
+            (app_name, deployment_name)
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        content = request.get(resource)
         return json.loads(content)
 
     def read_alias(self, app_name, alias_name, deployment_name):
@@ -323,14 +321,12 @@ class API():
         content = request.post(resource, data)
         return json.loads(content)
 
-    def read_workers(self, app_name=None, deployment_name=None):
-        content = None
-        if app_name and deployment_name:
-            self.requires_token()
-            resource = '/app/%s/deployment/%s/worker/' % \
-                (app_name, deployment_name)
-            request = Request(token=self.get_token(), api_url=self.api_url)
-            content = request.get(resource)
+    def read_workers(self, app_name, deployment_name):
+        self.requires_token()
+        resource = '/app/%s/deployment/%s/worker/' % \
+            (app_name, deployment_name)
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        content = request.get(resource)
         return json.loads(content)
 
     def read_worker(self, app_name, deployment_name, wrk_id):
@@ -363,14 +359,12 @@ class API():
         content = request.post(resource, data)
         return json.loads(content)
 
-    def read_cronjobs(self, app_name=None, deployment_name=None):
-        content = None
-        if app_name and deployment_name:
-            self.requires_token()
-            resource = '/app/%s/deployment/%s/cron/' % \
-                (app_name, deployment_name)
-            request = Request(token=self.get_token(), api_url=self.api_url)
-            content = request.get(resource)
+    def read_cronjobs(self, app_name, deployment_name):
+        self.requires_token()
+        resource = '/app/%s/deployment/%s/cron/' % \
+            (app_name, deployment_name)
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        content = request.get(resource)
         return json.loads(content)
 
     def read_cronjob(self, app_name, deployment_name, job_id):
