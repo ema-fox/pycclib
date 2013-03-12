@@ -276,13 +276,6 @@ class API():
         return json.loads(content)
 
     def read_aliases(self, app_name=None, deployment_name=None):
-        """
-            Get a list of addons.
-
-            If app_name and deployment_name are None it will return a list
-            of available addons. Otherwise a list of addons related to that
-            deployment.
-        """
         content = None
         if app_name and deployment_name:
             self.requires_token()
@@ -331,13 +324,6 @@ class API():
         return json.loads(content)
 
     def read_workers(self, app_name=None, deployment_name=None):
-        """
-            Get a list of addons.
-
-            If app_name and deployment_name are None it will return a list
-            of available addons. Otherwise a list of addons related to that
-            deployment.
-        """
         content = None
         if app_name and deployment_name:
             self.requires_token()
@@ -370,9 +356,6 @@ class API():
         return True
 
     def create_cronjob(self, app_name, deployment_name, url):
-        """
-            Add an worker to a deployment.
-        """
         self.requires_token()
         resource = '/app/%s/deployment/%s/cron/' % (app_name, deployment_name)
         request = Request(token=self.get_token(), api_url=self.api_url)
@@ -381,13 +364,6 @@ class API():
         return json.loads(content)
 
     def read_cronjobs(self, app_name=None, deployment_name=None):
-        """
-            Get a list of addons.
-
-            If app_name and deployment_name are None it will return a list
-            of available addons. Otherwise a list of addons related to that
-            deployment.
-        """
         content = None
         if app_name and deployment_name:
             self.requires_token()
@@ -398,9 +374,6 @@ class API():
         return json.loads(content)
 
     def read_cronjob(self, app_name, deployment_name, job_id):
-        """
-            Get all worker details.
-        """
         self.requires_token()
         resource = '/app/%s/deployment/%s/cron/%s/' % \
             (app_name, deployment_name, job_id)
@@ -409,9 +382,6 @@ class API():
         return json.loads(content)
 
     def delete_cronjob(self, app_name, deployment_name, job_id):
-        """
-            Remove an worker from a deployment.
-        """
         self.requires_token()
         resource = '/app/%s/deployment/%s/cron/%s/' % \
             (app_name, deployment_name, job_id)
@@ -420,9 +390,6 @@ class API():
         return True
 
     def create_addon(self, app_name, deployment_name, addon_name, options=None):
-        """
-            Add an alias to a deployment.
-        """
         self.requires_token()
         resource = '/app/%s/deployment/%s/addon/' % (app_name, deployment_name)
         request = Request(token=self.get_token(), api_url=self.api_url)
