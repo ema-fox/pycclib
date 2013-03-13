@@ -145,6 +145,12 @@ class API():
         """
         return self._token
 
+    def post_request(self, resource, data):
+        self.requires_token()
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        content = request.post(resource, data)
+        return json.loads(content)
+
     def get_request(self, resource):
         self.requires_token()
         request = Request(token=self.get_token(), api_url=self.api_url)
@@ -161,17 +167,12 @@ class API():
         """
             Create a new application and return it.
         """
-        self.requires_token()
-        resource = '/app/'
         data = {'name': app_name,
                 'type': type,
                 'repository_type': repository_type}
         if buildpack_url:
                 data['buildpack_url'] = buildpack_url
-
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/', data)
 
     def read_apps(self):
         """
@@ -197,16 +198,12 @@ class API():
 
             deployment_name is optional
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/' % app_name
-        request = Request(token=self.get_token(), api_url=self.api_url)
         data = {}
         if deployment_name:
             data['name'] = deployment_name
         if stack:
             data['stack'] = stack
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/deployment/' % app_name, data)
 
     def read_deployment(self, app_name, deployment_name):
         """
@@ -262,12 +259,9 @@ class API():
         """
             Add an alias to a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/alias/' % (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        data = {'name': alias_name}
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/deployment/%s/alias/' % \
+                                     (app_name, deployment_name),
+                                 {'name': alias_name})
 
     def read_aliases(self, app_name, deployment_name):
         return self.get_request('/app/%s/deployment/%s/alias/' % \
@@ -291,17 +285,14 @@ class API():
         """
             Add an worker to a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/worker/' % \
-            (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
         data = {'command': command}
         if params:
             data['params'] = params
         if size:
             data['size'] = size
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/deployment/%s/worker/' % \
+                                     (app_name, deployment_name),
+                                 data)
 
     def read_workers(self, app_name, deployment_name):
         return self.get_request('/app/%s/deployment/%s/worker/' % \
@@ -342,14 +333,12 @@ class API():
                                        (app_name, deployment_name, job_id))
 
     def create_addon(self, app_name, deployment_name, addon_name, options=None):
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/addon/' % (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
         data = {'addon': addon_name}
         if options:
             data['options'] = options
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/deployment/%s/addon/' % \
+                                     (app_name, deployment_name),
+                                 data)
 
     def read_addons(self, app_name=None, deployment_name=None):
         """
@@ -402,15 +391,10 @@ class API():
         """
             Add a user to an application.
         """
-        self.requires_token()
-        resource = '/app/%s/user/' % app_name
-        request = Request(token=self.get_token(), api_url=self.api_url)
         data = {'email': email}
         if role:
             data['role'] = role
-
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/user/' % app_name, data)
 
     def delete_app_user(self, app_name, user_name):
         """
@@ -506,12 +490,8 @@ class API():
         """
             Add a key to user by user_name.
         """
-        self.requires_token()
-        resource = '/user/%s/key/' % user_name
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        data = {'key': public_key}
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/user/%s/key/' % user_name,
+                                 {'key': public_key})
 
     def delete_user_key(self, user_name, key_id):
         """
@@ -547,11 +527,9 @@ class API():
         """
         creates a billing account.
         """
-        self.requires_token()
-        resource = '/user/%s/billing/%s/' % (userName, billingName)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/user/%s/billing/%s/' % \
+                                     (userName, billingName),
+                                 data)
 
     def update_billing_account(self, userName, billingName, data):
         """
