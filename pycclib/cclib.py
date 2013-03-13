@@ -317,12 +317,9 @@ class API():
                                        (app_name, deployment_name, wrk_id))
 
     def create_cronjob(self, app_name, deployment_name, url):
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/cron/' % (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        data = {'url': url}
-        content = request.post(resource, data)
-        return json.loads(content)
+        return self.post_request('/app/%s/deployment/%s/cron/' % \
+                                     (app_name, deployment_name),
+                                 {'url': url})
 
     def read_cronjobs(self, app_name, deployment_name):
         return self.get_request('/app/%s/deployment/%s/cron/' % \
