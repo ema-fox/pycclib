@@ -157,6 +157,12 @@ class API():
         content = request.get(resource)
         return json.loads(content)
 
+    def put_request(self, resource, data):
+        self.requires_token()
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        content = request.put(resource, data)
+        return json.loads(content)
+
     def delete_request(self, resource):
         self.requires_token()
         request = Request(token=self.get_token(), api_url=self.api_url)
@@ -231,11 +237,8 @@ class API():
             Use this to deploy new versions. If no version is provided the
             last version is deployed.
         """
-        self.requires_token()
         if deployment_name == '':
             deployment_name = 'default'
-        resource = '/app/%s/deployment/%s/' % (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
         data = {'version': version}
         if min_boxes:
             data['min_boxes'] = min_boxes
@@ -245,8 +248,9 @@ class API():
             data['billing_account'] = billing_account
         if stack:
             data['stack'] = stack
-        content = request.put(resource, data)
-        return json.loads(content)
+        return self.put_request('/app/%s/deployment/%s/' % \
+                                    (app_name, deployment_name),
+                                data)
 
     def delete_deployment(self, app_name, deployment_name):
         """
@@ -366,13 +370,10 @@ class API():
 
     def update_addon(self, app_name, deployment_name, addon_name_current,
                      addon_name_to_update_to):
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/addon/%s/' % \
-            (app_name, deployment_name, addon_name_current)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        data = {'addon': addon_name_to_update_to}
-        content = request.put(resource, data)
-        return json.loads(content)
+        return self.put_request('/app/%s/deployment/%s/addon/%s/' % \
+                                    (app_name, deployment_name,
+                                     addon_name_current),
+                                {'addon': addon_name_to_update_to})
 
     def delete_addon(self, app_name, deployment_name, addon_name):
         """
@@ -535,11 +536,9 @@ class API():
         """
         updates a billing account
         """
-        self.requires_token()
-        resource = '/user/%s/billing/%s/' % (userName, billingName)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        content = request.put(resource, data)
-        return json.loads(content)
+        return self.put_request('/user/%s/billing/%s/' % \
+                                    (userName, billingName),
+                                data)
 
     def get_billing_accounts(self, userName):
         """
