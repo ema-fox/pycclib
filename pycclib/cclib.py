@@ -151,6 +151,12 @@ class API():
         content = request.get(resource)
         return json.loads(content)
 
+    def delete_request(self, resource):
+        self.requires_token()
+        request = Request(token=self.get_token(), api_url=self.api_url)
+        request.delete(resource)
+        return True
+
     def create_app(self, app_name, type, repository_type, buildpack_url=None):
         """
             Create a new application and return it.
@@ -183,11 +189,7 @@ class API():
         """
             Delete a application.
         """
-        self.requires_token()
-        resource = '/app/%s/' % app_name
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/' % app_name)
 
     def create_deployment(self, app_name, deployment_name='', stack=None):
         """
@@ -253,11 +255,8 @@ class API():
         """
             Delete a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/' % (app_name, deployment_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/deployment/%s/' % \
+                                       (app_name, deployment_name))
 
     def create_alias(self, app_name, alias_name, deployment_name):
         """
@@ -285,12 +284,8 @@ class API():
         """
             Remove an alias from a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/alias/%s/' % \
-            (app_name, deployment_name, alias_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/deployment/%s/alias/%s/' % \
+                                       (app_name, deployment_name, alias_name))
 
     def create_worker(self, app_name, deployment_name, command, params=None, size=None):
         """
@@ -323,12 +318,8 @@ class API():
         """
             Remove an worker from a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/worker/%s/' % \
-            (app_name, deployment_name, wrk_id)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/deployment/%s/worker/%s/' % \
+                                       (app_name, deployment_name, wrk_id))
 
     def create_cronjob(self, app_name, deployment_name, url):
         self.requires_token()
@@ -347,12 +338,8 @@ class API():
                                     (app_name, deployment_name, job_id))
 
     def delete_cronjob(self, app_name, deployment_name, job_id):
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/cron/%s/' % \
-            (app_name, deployment_name, job_id)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/deployment/%s/cron/%s/' % \
+                                       (app_name, deployment_name, job_id))
 
     def create_addon(self, app_name, deployment_name, addon_name, options=None):
         self.requires_token()
@@ -402,12 +389,8 @@ class API():
         """
             Remove an addon from a deployment.
         """
-        self.requires_token()
-        resource = '/app/%s/deployment/%s/addon/%s/' % \
-            (app_name, deployment_name, addon_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/deployment/%s/addon/%s/' % \
+                                       (app_name, deployment_name, addon_name))
 
     def read_app_users(self, app_name):
         """
@@ -433,11 +416,7 @@ class API():
         """
            Remove a user from an application.
         """
-        self.requires_token()
-        resource = '/app/%s/user/%s/' % (app_name, user_name)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/app/%s/user/%s/' % (app_name, user_name))
 
     def create_deployment_user(self, app_name, deployment_name, email, role=None):
         """
@@ -509,11 +488,7 @@ class API():
         """
             Delete user by user_name.
         """
-        self.requires_token()
-        resource = '/user/%s/' % user_name
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/user/%s/' % user_name)
 
     def read_user_keys(self, user_name):
         """
@@ -544,11 +519,7 @@ class API():
 
             Requires key_id that can be requested using read_user_keys()
         """
-        self.requires_token()
-        resource = '/user/%s/key/%s/' % (user_name, key_id)
-        request = Request(token=self.get_token(), api_url=self.api_url)
-        request.delete(resource)
-        return True
+        return self.delete_request('/user/%s/key/%s/' % (user_name, key_id))
 
     def read_log(self, app_name, deployment_name, log_type, last_time=None):
         """
