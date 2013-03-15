@@ -588,10 +588,8 @@ class BadRequestError(Exception):
             self.msgs = {}
 
     def __str__(self):
-        msg = ''
-        for key in self.msgs:
-            msg = msg + key + ': ' + self.msgs[key] + '\n'
-        return msg
+        return '\n'.join(['%s: %s' % keyvalue
+                          for keyvalue in self.msgs.iteritems()])
 
 
 class UnauthorizedError(Exception):
