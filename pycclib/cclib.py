@@ -818,7 +818,7 @@ class Request():
         self.version = VERSION
         self.cache = CACHE
         if not api_url:
-            raise ValueError('Request has be initialized with an api_url arg')
+            raise ValueError('Request has to be initialized with an api_url arg')
         self.url = api_url
         self.disable_ssl_check = DISABLE_SSL_CHECK
         self.ca_certs = CA_CERTS
